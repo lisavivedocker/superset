@@ -88,3 +88,69 @@ volumes:
     external: false
   redis:
     external: false
+
+
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "SA_PASSWORD=Projet1!"
+    ports:
+      - "1433:1433"
+    hostname: mssql
+    volumes:
+      - "mssql-2017-data:/var/opt/mssql"
+    networks: 
+      - "learndb_net"
+  webapp:    
+    build: app/.
+    environment:
+#      - "CONNSTR=DRIVER={ODBC Driver 17 for SQL Server};SERVER=mssql,1433;DATABASE=master;UID=sa;PWD=SU2orange!"
+#      - "Driver={ODBC Driver 13 for SQL Server};SERVER=tcp:servertom.database.windows.net,1433;DATABASE=bdTom;UID=Tom;Pwd=Projet1!"
+      - "FLASK_APP=app.py"
+      - "FLASK_ENV=development"
+      - "SCHEMA_PATH=/app/schemas"
+      - "SQL_CLIENT_HOST=servertom.database.windows.net"
+      - "SQL_CLIENT_PORT=1433"
+      - "SQL_CLIENT_USER=Tom"
+      - "SQL_CLIENT_PASS=Projet1!"
+      - "SQL_CLIENT_CMD=/opt/mssql-tools/bin/sqlcmd"
+      - "RANDOM_SEED=0"
+    ports: 
+      - "5000:5000"
+    links:
+      - mssql
+    volumes:
+      - "./app/:/app/" # for now
+      - "./schemas:/app/schemas"
+    networks: 
+      - "learndb_net"
+  adminer:
+    build: adminer/.
+    ports:
+      - "5002:8080"
+    links:
+      - mssql
+    networks:
+      - "learndb_net"
+
+#  superset:
+#    build: superset/.
+#    links:
+#      - mssql
+#    ports:
+#      - "5088:8088"
+#  omnidb:
+#    image: t4skforce/omnidb:latest
+#    links:
+#      - mssql
+#    ports:
+#      - "5080:8000"
+#      - "25482:25482"
+volumes:
+    mssql-2017-data:
+    
+networks:
+  learndb_net:
+    driver: bridge
