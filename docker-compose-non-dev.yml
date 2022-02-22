@@ -80,17 +80,9 @@ services:
     depends_on: *superset-depends-on
     user: "root"
     volumes: *superset-volumes
-
-volumes:
-  superset_home:
-    external: false
-  db_home:
-    external: false
-  redis:
-    external: false
-
-
-
+    
+    
+    
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
     environment:
@@ -135,6 +127,21 @@ volumes:
     networks:
       - "learndb_net"
 
+volumes:
+    mssql-2017-data:
+  superset_home:
+    external: false
+  db_home:
+    external: false
+  redis:
+    external: false
+
+
+networks:
+  learndb_net:
+    driver: bridge
+
+
 #  superset:
 #    build: superset/.
 #    links:
@@ -148,9 +155,3 @@ volumes:
 #    ports:
 #      - "5080:8000"
 #      - "25482:25482"
-volumes:
-    mssql-2017-data:
-    
-networks:
-  learndb_net:
-    driver: bridge
