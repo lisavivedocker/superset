@@ -128,7 +128,7 @@ services:
       - "learndb_net"
 
 volumes:
-    mssql-2017-data:
+  mssql-2017-data:
   superset_home:
     external: false
   db_home:
